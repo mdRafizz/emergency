@@ -2,6 +2,7 @@ import 'package:emergency/common/custom_textfield.dart';
 import 'package:emergency/common/reusable_text.dart';
 import 'package:emergency/utils/constants.dart';
 import 'package:emergency/views/home/home_main.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -9,8 +10,18 @@ import 'package:gap/gap.dart';
 
 import '../signup/signup_main.dart';
 
-class LoginMain extends StatelessWidget {
+class LoginMain extends StatefulWidget {
   const LoginMain({super.key});
+
+  @override
+  State<LoginMain> createState() => _LoginMainState();
+}
+
+class _LoginMainState extends State<LoginMain> {
+  final _email = TextEditingController();
+  final _password = TextEditingController();
+
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +73,7 @@ class LoginMain extends StatelessWidget {
                 size: 20.sp,
                 color: AppConstants.kBkDark,
               ),
-              controller: TextEditingController(),
+              controller: _email,
             ),
             Gap(35.h),
             const ReusableText(
@@ -75,17 +86,22 @@ class LoginMain extends StatelessWidget {
             ),
             Gap(10.h),
             CustomTextField(
+              obscureText: true,
               height: 55.h,
               hintText: 'Enter password',
-              prefixIcon: Icon(Icons.password_rounded,size: 20.sp,color: AppConstants.kBkDark,),
-              controller: TextEditingController(),
+              prefixIcon: Icon(
+                Icons.password_rounded,
+                size: 20.sp,
+                color: AppConstants.kBkDark,
+              ),
+              controller: _password,
             ),
             Gap(10.h),
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
                 onPressed: () {},
-                child: ReusableText(
+                child: const ReusableText(
                   'Forget Password?',
                   color: Colors.white,
                   fontSize: 13,
@@ -94,11 +110,52 @@ class LoginMain extends StatelessWidget {
             ),
             Gap(16.h),
             MaterialButton(
-              onPressed: () => Navigator.of(context).push(
-                CupertinoPageRoute(
-                  builder: (_) => const HomeMain(),
-                ),
-              ),
+              onPressed: () async {
+                setState(() {
+                  _isLoading = true;
+                });
+                String? errorMsg = await signUpWithEmailAndPassword(
+                  _email.text,
+                  _password.text,
+                );
+                if (errorMsg == null) {
+                  _isLoading = false;
+                  Navigator.of(context).pushReplacement(
+                    CupertinoPageRoute(
+                      builder: (_) => const HomeMain(),
+                    ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).clearSnackBars();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Row(
+                        children: [
+                          const Icon(
+                            Icons.error_outline_rounded,
+                            color: Colors.red,
+                          ),
+                          const Gap(8),
+                          Flexible(
+                            child: ReusableText(
+                              errorMsg,
+                              maxLines: 5,
+                              overflow: TextOverflow.ellipsis,
+                              color: Colors.red,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                      backgroundColor: Colors.white,
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                  setState(() {
+                    _isLoading = false;
+                  });
+                }
+              },
               color: Colors.white,
               height: 55.h,
               shape: const RoundedRectangleBorder(
@@ -106,13 +163,17 @@ class LoginMain extends StatelessWidget {
                   Radius.circular(7),
                 ),
               ),
-              child: const Center(
-                child: ReusableText(
-                  'LogIn',
-                  fontSize: 16.5,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.9,
-                ),
+              child: Center(
+                child: _isLoading
+                    ? const CupertinoActivityIndicator(
+                        color: Colors.black,
+                      )
+                    : const ReusableText(
+                        'LogIn',
+                        fontSize: 16.5,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 1.9,
+                      ),
               ),
             ),
             Gap(20.h),
@@ -145,5 +206,24 @@ class LoginMain extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<String?> signUpWithEmailAndPassword(
+      String email, String password) async {
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      // If successful, return null (no error)
+      return null;
+    } on FirebaseAuthException catch (e) {
+      // If sign up fails, return the error message
+      return e.message;
+    } catch (e) {
+      // For other errors, return a generic error message
+      return 'Error occurred while signing up. Please try again later.';
+    }
   }
 }

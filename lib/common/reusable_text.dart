@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ReusableText extends StatelessWidget {
-  const ReusableText(this.text,{
+  const ReusableText(
+    this.text, {
     super.key,
     this.fontSize,
     this.color,
@@ -10,7 +11,10 @@ class ReusableText extends StatelessWidget {
     this.fontFamily,
     this.wordSpacing,
     this.letterSpacing,
-    this.height, this.textAlign,
+    this.height,
+    this.textAlign,
+    this.overflow,
+    this.maxLines,
   });
 
   final String text;
@@ -22,11 +26,15 @@ class ReusableText extends StatelessWidget {
   final double? letterSpacing;
   final double? height;
   final TextAlign? textAlign;
+  final TextOverflow? overflow;
+  final int? maxLines;
 
   @override
   Widget build(BuildContext context) {
     return Text(
       text,
+      maxLines: maxLines,
+      overflow: overflow,
       textAlign: textAlign,
       style: TextStyle(
         fontFamily: fontFamily,

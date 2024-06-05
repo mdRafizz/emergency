@@ -15,7 +15,7 @@ class CustomTextField extends StatelessWidget {
     this.onChanged,
     this.width,
     this.label,
-    this.height, this.color,
+    this.height, this.color, this.obscureText,
   });
 
   final TextInputType? keyboardType;
@@ -29,6 +29,7 @@ class CustomTextField extends StatelessWidget {
   final double? width;
   final double? height;
   final Color? color;
+  final bool? obscureText;
 
   @override
   Widget build(BuildContext context) {
@@ -44,6 +45,7 @@ class CustomTextField extends StatelessWidget {
         keyboardType: keyboardType,
         controller: controller,
         cursorHeight: 25,
+        obscureText: obscureText??false,
         onChanged: onChanged,
         style: const TextStyle(
             fontSize: 12,

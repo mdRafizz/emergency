@@ -1,4 +1,5 @@
 import 'package:emergency/views/login/login_main.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -8,8 +9,19 @@ import '../../common/custom_textfield.dart';
 import '../../common/reusable_text.dart';
 import '../../utils/constants.dart';
 
-class SignUpMain extends StatelessWidget {
+class SignUpMain extends StatefulWidget {
   const SignUpMain({super.key});
+
+  @override
+  State<SignUpMain> createState() => _SignUpMainState();
+}
+
+class _SignUpMainState extends State<SignUpMain> {
+  final _email = TextEditingController();
+  final _password = TextEditingController();
+  final _username = TextEditingController();
+
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +65,7 @@ class SignUpMain extends StatelessWidget {
             ),
             Gap(10.h),
             CustomTextField(
+              controller: _username,
               height: 55.h,
               hintText: 'Enter username',
               prefixIcon: Icon(
@@ -60,7 +73,6 @@ class SignUpMain extends StatelessWidget {
                 size: 20.sp,
                 color: AppConstants.kBkDark,
               ),
-              controller: TextEditingController(),
             ),
             Gap(35.h),
             const ReusableText(
@@ -73,6 +85,7 @@ class SignUpMain extends StatelessWidget {
             ),
             Gap(10.h),
             CustomTextField(
+              controller: _email,
               height: 55.h,
               hintText: 'exmaple@gmail.com',
               prefixIcon: Icon(
@@ -80,7 +93,6 @@ class SignUpMain extends StatelessWidget {
                 size: 20.sp,
                 color: AppConstants.kBkDark,
               ),
-              controller: TextEditingController(),
             ),
             Gap(35.h),
             const ReusableText(
@@ -93,6 +105,8 @@ class SignUpMain extends StatelessWidget {
             ),
             Gap(10.h),
             CustomTextField(
+              obscureText: true,
+              controller: _password,
               height: 55.h,
               hintText: 'Enter password',
               prefixIcon: Icon(
@@ -100,11 +114,105 @@ class SignUpMain extends StatelessWidget {
                 size: 20.sp,
                 color: AppConstants.kBkDark,
               ),
-              controller: TextEditingController(),
             ),
             Gap(45.h),
             MaterialButton(
-              onPressed: () {},
+              onPressed: () async {
+                if (_email.text.isEmpty ||
+                    _password.text.isEmpty ||
+                    _username.text.isEmpty) {
+                  ScaffoldMessenger.of(context).clearSnackBars();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Row(
+                        children: [
+                          Icon(
+                            Icons.error_outline_rounded,
+                          ),
+                          Gap(8),
+                          ReusableText(
+                            'Fill the form first.',
+                            color: Colors.red,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ],
+                      ),
+                      backgroundColor: Colors.white,
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                } else {
+                  setState(() {
+                    _isLoading = true;
+                  });
+
+                  String? errorMessage = await signUpWithEmailAndPassword(
+                    _email.text,
+                    _password.text,
+                  );
+
+                  if (errorMessage != null) {
+                    ScaffoldMessenger.of(context).clearSnackBars();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Row(
+                          children: [
+                            const Icon(
+                              Icons.error_outline_rounded,
+                              color: Colors.red,
+                            ),
+                            const Gap(8),
+                            Flexible(
+                              child: ReusableText(
+                                errorMessage,
+                                maxLines: 5,
+                                color: Colors.red,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                        backgroundColor: Colors.white,
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
+                    setState(() {
+                      _isLoading = false;
+                    });
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Row(
+                          children: [
+                            Icon(
+                              Icons.error_outline_rounded,
+                            ),
+                            Gap(8),
+                            ReusableText(
+                              'Account successfully created.',
+                              color: Colors.green,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ],
+                        ),
+                        backgroundColor: Colors.white,
+                        behavior: SnackBarBehavior.floating,
+                      ),
+                    );
+                    setState(() {
+                      _isLoading = false;
+                    });
+                    Future.delayed(const Duration(milliseconds: 500), () {
+                      ScaffoldMessenger.of(context).clearSnackBars();
+                      Navigator.of(context).pushReplacement(
+                        CupertinoPageRoute(
+                          builder: (_) => const LoginMain(),
+                        ),
+                      );
+                    });
+                  }
+                }
+              },
               color: Colors.white,
               height: 55.h,
               shape: const RoundedRectangleBorder(
@@ -112,13 +220,17 @@ class SignUpMain extends StatelessWidget {
                   Radius.circular(7),
                 ),
               ),
-              child: const Center(
-                child: ReusableText(
-                  'Sign Up',
-                  fontSize: 16.5,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 1.9,
-                ),
+              child: Center(
+                child: _isLoading
+                    ? const CupertinoActivityIndicator(
+                        color: Colors.black,
+                      )
+                    : const ReusableText(
+                        'Sign Up',
+                        fontSize: 16.5,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 1.9,
+                      ),
               ),
             ),
             Gap(20.h),
@@ -153,5 +265,24 @@ class SignUpMain extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Future<String?> signUpWithEmailAndPassword(
+      String email, String password) async {
+    try {
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      // If successful, return null (no error)
+      return null;
+    } on FirebaseAuthException catch (e) {
+      // If sign up fails, return the error message
+      return e.message;
+    } catch (e) {
+      // For other errors, return a generic error message
+      return 'Error occurred while signing up. Please try again later.';
+    }
   }
 }
