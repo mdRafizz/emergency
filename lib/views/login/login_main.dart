@@ -1,3 +1,4 @@
+import 'package:emergency/app_route.dart';
 import 'package:emergency/common/custom_textfield.dart';
 import 'package:emergency/common/reusable_text.dart';
 import 'package:emergency/utils/constants.dart';
@@ -7,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 
 import '../signup/signup_main.dart';
 
@@ -120,35 +122,29 @@ class _LoginMainState extends State<LoginMain> {
                 );
                 if (errorMsg == null) {
                   _isLoading = false;
-                  Navigator.of(context).pushReplacement(
-                    CupertinoPageRoute(
-                      builder: (_) => const HomeMain(),
-                    ),
-                  );
+                  Get.offNamed(AppRoutes.home);
                 } else {
-                  ScaffoldMessenger.of(context).clearSnackBars();
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Row(
-                        children: [
-                          const Icon(
-                            Icons.error_outline_rounded,
+                  if(Get.isSnackbarOpen){
+                    Get.closeAllSnackbars();
+                  }
+                  Get.rawSnackbar(
+                    messageText: Row(
+                      children: [
+                        const Icon(
+                          Icons.error_outline_rounded,
+                          color: Colors.red,
+                        ),
+                        const Gap(8),
+                        Flexible(
+                          child: ReusableText(
+                            errorMsg,
+                            maxLines: 5,
+                            overflow: TextOverflow.ellipsis,
                             color: Colors.red,
+                            fontWeight: FontWeight.w500,
                           ),
-                          const Gap(8),
-                          Flexible(
-                            child: ReusableText(
-                              errorMsg,
-                              maxLines: 5,
-                              overflow: TextOverflow.ellipsis,
-                              color: Colors.red,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ],
-                      ),
-                      backgroundColor: Colors.white,
-                      behavior: SnackBarBehavior.floating,
+                        ),
+                      ],
                     ),
                   );
                   setState(() {
@@ -187,10 +183,7 @@ class _LoginMainState extends State<LoginMain> {
                 ),
                 Gap(5.w),
                 GestureDetector(
-                  onTap: () => Navigator.of(context).pushReplacement(
-                    CupertinoPageRoute(
-                      builder: (_) => const SignUpMain(),
-                    ),
+                  onTap: () => Get.offNamed(AppRoutes.signup,
                   ),
                   child: const ReusableText(
                     'Sign Up',
@@ -219,7 +212,6 @@ class _LoginMainState extends State<LoginMain> {
       // If successful, return null (no error)
       return null;
     } on FirebaseAuthException catch (e) {
-      // If sign up fails, return the error message
       return e.message;
     } catch (e) {
       // For other errors, return a generic error message

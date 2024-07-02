@@ -1,7 +1,9 @@
+import 'package:emergency/app_route.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:gap/gap.dart';
+import 'package:get/get.dart';
 
 import '../../../common/reusable_text.dart';
 
@@ -54,10 +56,13 @@ class Home extends StatelessWidget {
                     color: Color(0xfffae7af),
                     borderRadius: BorderRadius.all(Radius.circular(50),),
                   ),
-                  child: Icon(
-                    CupertinoIcons.person,
-                    size: 17.sp,
-                    color: Colors.black,
+                  child: GestureDetector(
+                    onTap: ()=> Get.toNamed(AppRoutes.profile),
+                    child: Icon(
+                      CupertinoIcons.person,
+                      size: 17.sp,
+                      color: Colors.black,
+                    ),
                   ),
                 ),
               ],
