@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "14244221262",
-    "project_id": "human-safety-f9e74",
-    "storage_bucket": "human-safety-f9e74.appspot.com"
+    "project_number": "450156909723",
+    "project_id": "emergency-2ce82",
+    "storage_bucket": "emergency-2ce82.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:14244221262:android:66371295fd09333d0b8e1f",
+        "mobilesdk_app_id": "1:450156909723:android:95987b0e7945059a7c623e",
         "android_client_info": {
-          "package_name": "com.mdraf"
+          "package_name": "com.example.emergency"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyC3fIAKJ3MGRfRvWgZj1HathPWbHzW9xtU"
+          "current_key": "AIzaSyCTl-_DsaqvrNPMkg9hgpZxFeDrLGG0CEY"
         }
       ],
       "services": {

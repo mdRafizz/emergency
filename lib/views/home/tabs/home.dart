@@ -1,4 +1,5 @@
 import 'package:emergency/app_route.dart';
+import 'package:emergency/views/division/division_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -6,6 +7,7 @@ import 'package:gap/gap.dart';
 import 'package:get/get.dart';
 
 import '../../../common/reusable_text.dart';
+import '../../location/location_screen.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
@@ -20,6 +22,67 @@ class Home extends StatelessWidget {
       Icons.vaccines_rounded: 'Pharmacy',
       Icons.location_on_rounded: 'Own Location',
     };
+
+    var buttonActions = <VoidCallback>[
+      () {
+        Get.to(
+              () => DivisionScreen(),
+          duration: const Duration(
+            milliseconds: 654,
+          ),
+          transition: Transition.fade,
+        );
+        // Action for Police Station button
+        debugPrint('Police Station button pressed');
+      },
+      () {
+        Get.to(
+              () => DivisionScreen(),
+          duration: const Duration(
+            milliseconds: 654,
+          ),
+          transition: Transition.fade,
+        );
+        // Action for Hospital button
+        debugPrint('Hospital button pressed');
+      },
+      () {
+        Get.to(
+              () => DivisionScreen(),
+          duration: const Duration(
+            milliseconds: 654,
+          ),
+          transition: Transition.fade,
+        );
+        // Action for Fire Service button
+        debugPrint('Fire Service button pressed');
+      },
+      () {
+        Get.to(
+              () => DivisionScreen(),
+          duration: const Duration(
+            milliseconds: 654,
+          ),
+          transition: Transition.fade,
+        );
+        debugPrint('Bus Station button pressed');
+      },
+      () {
+        Get.to(
+          () => DivisionScreen(),
+          duration: const Duration(
+            milliseconds: 654,
+          ),
+          transition: Transition.fade,
+        );
+        // Action for Fire Service button
+        debugPrint('Pharmacy button pressed');
+      },
+      () {
+        Get.to(() => LocationScreen());
+        debugPrint('Own Location button pressed');
+      },
+    ];
 
     return SafeArea(
       child: ListView(
@@ -41,7 +104,9 @@ class Home extends StatelessWidget {
                   padding: EdgeInsets.all(7.sp),
                   decoration: const BoxDecoration(
                     color: Color(0xfffae7af),
-                    borderRadius: BorderRadius.all(Radius.circular(50),),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(50),
+                    ),
                   ),
                   child: Icon(
                     CupertinoIcons.search,
@@ -54,10 +119,12 @@ class Home extends StatelessWidget {
                   padding: EdgeInsets.all(7.sp),
                   decoration: const BoxDecoration(
                     color: Color(0xfffae7af),
-                    borderRadius: BorderRadius.all(Radius.circular(50),),
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(50),
+                    ),
                   ),
                   child: GestureDetector(
-                    onTap: ()=> Get.toNamed(AppRoutes.profile),
+                    onTap: () => Get.toNamed(AppRoutes.profile),
                     child: Icon(
                       CupertinoIcons.person,
                       size: 17.sp,
@@ -111,7 +178,7 @@ class Home extends StatelessWidget {
                       Radius.circular(15),
                     ),
                   ),
-                  onPressed: () {},
+                  onPressed: buttonActions[index],
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [

@@ -29,7 +29,7 @@ class _SignUpMainState extends State<SignUpMain> {
   final _password = TextEditingController();
   final _username = TextEditingController();
   String _dob = 'Select your birthday';
-  String _bloodGroup = 'O+';
+  String? _bloodGroup;
 
   File? _photo;
   final ImagePicker _picker = ImagePicker();
@@ -38,6 +38,7 @@ class _SignUpMainState extends State<SignUpMain> {
     if (_email.text.isEmpty ||
         _password.text.isEmpty ||
         _username.text.isEmpty ||
+        _bloodGroup == null ||
         _dob == 'Select your birthday' ||
         _photo == null) {
       Get.snackbar(
@@ -49,8 +50,11 @@ class _SignUpMainState extends State<SignUpMain> {
         setState(() {
           _isLoading = true;
         });
-        signUpWithEmailAndPassword(_email.text, _password.text);
-        final fileName = _email.text;
+        await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: _email.text.trim(),
+          password: _password.text,
+        );
+        final fileName = _email.text.trim();
         final destination = 'files/$fileName';
         final ref = FirebaseStorage.instance.ref(destination).child('file/');
         final uploadTask = ref.putFile(_photo!);
@@ -394,16 +398,16 @@ class _SignUpMainState extends State<SignUpMain> {
     );
   }
 
-  Future<String?> signUpWithEmailAndPassword(
-      String email, String password) async {
+  Future signUpWithEmailAndPassword(String email, String password) async {
     try {
-      UserCredential userCredential =
+      UserCredential result =
           await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-      // If successful, return null (no error)
-      return null;
+      User? user = result.user;
+
+      return user;
     } on FirebaseAuthException catch (e) {
       // If sign up fails, return the error message
       return e.message;
