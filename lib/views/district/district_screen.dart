@@ -7,8 +7,12 @@ import '../upazila/upazila_screen.dart';
 
 class DistrictScreen extends StatefulWidget {
   final String divisionId;
+  final String title;
 
-  const DistrictScreen({required this.divisionId});
+  const DistrictScreen({
+    required this.divisionId,
+    required this.title,
+  });
 
   @override
   createState() => _DistrictScreenState();
@@ -47,7 +51,10 @@ class _DistrictScreenState extends State<DistrictScreen> {
                   title: Text(districts[index].name),
                   onTap: () {
                     Get.to(
-                      () => UpazilaScreen(districtId: districts[index].id),
+                      () => UpazilaScreen(
+                        districtId: districts[index].id,
+                        title: widget.title,
+                      ),
                       duration: const Duration(
                         milliseconds: 654,
                       ),

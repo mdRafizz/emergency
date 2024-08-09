@@ -1,4 +1,7 @@
+import 'package:emergency/views/number/number_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:get/get_core/src/get_main.dart';
 
 import '../../data/model/postcode.dart';
 import '../../data/model/upazila.dart';
@@ -6,8 +9,12 @@ import '../../utils/utils.dart';
 
 class UpazilaScreen extends StatefulWidget {
   final String districtId;
+  final String title;
 
-  const UpazilaScreen({required this.districtId});
+  const UpazilaScreen({
+    required this.districtId,
+    required this.title,
+  });
 
   @override
   createState() => _UpazilaScreenState();
@@ -20,10 +27,12 @@ class _UpazilaScreenState extends State<UpazilaScreen> {
   @override
   void initState() {
     super.initState();
-    futureUpazilas = loadUpazilas().then((upazilas) =>
-        upazilas.where((upazila) => upazila.districtId == widget.districtId).toList());
-    futurePostcodes = loadPostcodes().then((postcodes) =>
-        postcodes.where((postcode) => postcode.districtId == widget.districtId).toList());
+    futureUpazilas = loadUpazilas().then((upazilas) => upazilas
+        .where((upazila) => upazila.districtId == widget.districtId)
+        .toList());
+    futurePostcodes = loadPostcodes().then((postcodes) => postcodes
+        .where((postcode) => postcode.districtId == widget.districtId)
+        .toList());
   }
 
   @override
@@ -44,18 +53,34 @@ class _UpazilaScreenState extends State<UpazilaScreen> {
             return FutureBuilder<List<Postcode>>(
               future: futurePostcodes,
               builder: (context, postcodeSnapshot) {
-                if (postcodeSnapshot.connectionState == ConnectionState.waiting) {
+                if (postcodeSnapshot.connectionState ==
+                    ConnectionState.waiting) {
                   return Center(child: CircularProgressIndicator());
                 } else if (postcodeSnapshot.hasError) {
-                  return Center(child: Text('ErrorP: ${postcodeSnapshot.error}'));
+                  return Center(
+                      child: Text('ErrorP: ${postcodeSnapshot.error}'));
                 } else {
                   final postcodes = postcodeSnapshot.data!;
                   return ListView.builder(
                     itemCount: upazilas.length,
                     itemBuilder: (context, index) {
                       return ListTile(
-                        title: Text('${upazilas[index].name} (${upazilas[index].bnName})'),
-                        subtitle: Text('  -Post Office: ${postcodes[index].postOffice}\n  -Postcode: ${postcodes[index].postCode}'),
+                        title: Text(
+                            '${upazilas[index].name} (${upazilas[index].bnName})'),
+                        subtitle: Text(
+                            '  -Post Office: ${postcodes[index].postOffice}\n  -Postcode: ${postcodes[index].postCode}'),
+                        onTap: () {
+                          Get.to(
+                            () => NumberScreen(
+                              upazillaId: upazilas[index].id,
+                              title: widget.title,
+                            ),
+                            duration: const Duration(
+                              milliseconds: 654,
+                            ),
+                            transition: Transition.fade,
+                          );
+                        },
                       );
                     },
                   );

@@ -26,7 +26,9 @@ class Home extends StatelessWidget {
     var buttonActions = <VoidCallback>[
       () {
         Get.to(
-              () => DivisionScreen(),
+              () => const DivisionScreen(
+                title: 'Police Station',
+              ),
           duration: const Duration(
             milliseconds: 654,
           ),
@@ -37,7 +39,9 @@ class Home extends StatelessWidget {
       },
       () {
         Get.to(
-              () => DivisionScreen(),
+              () => const DivisionScreen(
+                title: 'Hospital',
+              ),
           duration: const Duration(
             milliseconds: 654,
           ),
@@ -48,7 +52,9 @@ class Home extends StatelessWidget {
       },
       () {
         Get.to(
-              () => DivisionScreen(),
+              () => const DivisionScreen(
+                title: 'Fire Service',
+              ),
           duration: const Duration(
             milliseconds: 654,
           ),
@@ -59,7 +65,9 @@ class Home extends StatelessWidget {
       },
       () {
         Get.to(
-              () => DivisionScreen(),
+              () => const DivisionScreen(
+                title: 'Bus Station',
+              ),
           duration: const Duration(
             milliseconds: 654,
           ),
@@ -69,7 +77,9 @@ class Home extends StatelessWidget {
       },
       () {
         Get.to(
-          () => DivisionScreen(),
+          () => const DivisionScreen(
+            title: 'Pharmacy',
+          ),
           duration: const Duration(
             milliseconds: 654,
           ),

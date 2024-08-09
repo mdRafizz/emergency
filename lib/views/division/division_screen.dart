@@ -7,7 +7,12 @@ import '../../utils/utils.dart';
 import '../district/district_screen.dart';
 
 class DivisionScreen extends StatefulWidget {
-  const DivisionScreen({super.key});
+  const DivisionScreen({
+    super.key,
+    required this.title,
+  });
+
+  final String title;
 
   @override
   createState() => _DivisionScreenState();
@@ -44,7 +49,10 @@ class _DivisionScreenState extends State<DivisionScreen> {
                   title: Text(divisions[index].name),
                   onTap: () {
                     Get.to(
-                          () => DistrictScreen(divisionId: divisions[index].id),
+                      () => DistrictScreen(
+                        divisionId: divisions[index].id,
+                        title: widget.title,
+                      ),
                       duration: const Duration(
                         milliseconds: 654,
                       ),
