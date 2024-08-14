@@ -1,6 +1,6 @@
 # emergency
 
-A new Flutter project.
+it's a dummy project just for practice and fun...
 
 ## Getting Started
 
